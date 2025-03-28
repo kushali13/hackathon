@@ -1,0 +1,51 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Courses - UpSkillers{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">All Courses</h2>
+
+    <!-- Filter Section -->
+    <div class="text-center mb-4">
+        <input type="text" id="searchBox" class="form-control w-50 mx-auto" placeholder="Search courses...">
+    </div>
+
+    <!-- Courses Grid -->
+    <div class="row" id="coursesContainer">
+        {% for course in courses %}
+        <div class="col-md-4 course-card">
+            <div class="card">
+                <img src="{{ course.image.url }}" style="height: 200px; object-fit: cover" class="card-img-top" alt="{{ course.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <p class="card-text">{{ course.description|truncatewords:15 }}</p>
+                    <a href="" class="btn btn-primary">View Course</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No courses available at the moment.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- JavaScript for Filtering -->
+<script>
+    document.getElementById('searchBox').addEventListener('keyup', function () {
+        let filter = this.value.toLowerCase();
+        let courseCards = document.querySelectorAll('.course-card');
+
+        courseCards.forEach(function (card) {
+            let title = card.querySelector('.card-title').textContent.toLowerCase();
+            if (title.includes(filter)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    });
+</script>
+
+{% endblock %}
