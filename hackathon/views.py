@@ -81,6 +81,36 @@ def courses(request):
     courses = Course.objects.all()
     return render(request, "courses.html", {"courses": courses})
 
+def add_course(request):
+    if request.method == "POST":
+        title = request.POST["title"]
+        description = request.POST["description"]
+        image = request.FILES["image"]
+        instructor = request.user  # Assuming the logged-in user is the instructor
+        start_date = request.POST["start_date"]
+        end_date = request.POST["end_date"]
+        price = request.POST["price"]
+        syllabus = request.POST.get("syllabus", "")
+        prerequisites = request.POST.get("prerequisites", "")
+        course_materials = request.POST.get("course_materials", "")
+
+        course = Course.objects.create(
+            title=title,
+            description=description,
+            image=image,
+            instructor=instructor,
+            start_date=start_date,
+            end_date=end_date,
+            price=price,
+            syllabus=syllabus,
+            prerequisites=prerequisites,
+            course_materials=course_materials
+        )
+
+        messages.success(request, "Course added successfully!")
+        return redirect("courses")
+
+    return render(request, "add_course.html")
 
 def logout_view(request):
     auth_logout(request)  # Use auth_logout to avoid conflicts
