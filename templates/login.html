@@ -9,14 +9,13 @@
         <!-- LOGIN & SIGNUP TOGGLE -->
         <div class="toggle-buttons mb-3">
             <button class="toggle-btn active" onclick="showLogin()">Login</button>
-            <button class="toggle-btn" onclick="showRegister()">Register</button>
         </div>
 
         <div class="form-container">
             <!-- SIGN IN FORM -->
             <div id="loginForm">
-                <h3 class="text-center text-primary">Welcome Back!</h3>
-                <form method="POST" action="{% url 'login' %}">
+                <h3 class="text-center text-primary">Welcome!</h3>
+                <form method="POST" action="{% url 'user_login' %}">
                     {% csrf_token %}
                     <div class="input-group">
                         <input type="text" name="username" class="form-control" placeholder="Username" required>
@@ -24,31 +23,12 @@
                     <div class="input-group">
                         <input type="password" name="password" class="form-control" placeholder="Password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Sign In</button>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
                     <p class="text-center mt-2"><a href="#">Forgot Password?</a></p>
                 </form>
             </div>
 
-            <!-- SIGN UP FORM -->
-            <div id="registerForm" style="display: none;">
-                <h3 class="text-center text-success">Join UpSkillers</h3>
-                <form method="POST" action="{% url 'register' %}">
-                    {% csrf_token %}
-                    <div class="input-group">
-                        <input type="text" name="username" class="form-control" placeholder="Username" required>
-                    </div>
-                    <div class="input-group">
-                        <input type="email" name="email" class="form-control" placeholder="Email" required>
-                    </div>
-                    <div class="input-group">
-                        <input type="password" name="password1" class="form-control" placeholder="Password" required>
-                    </div>
-                    <div class="input-group">
-                        <input type="password" name="password2" class="form-control" placeholder="Confirm Password" required>
-                    </div>
-                    <button type="submit" class="btn btn-success w-100">Register</button>
-                </form>
-            </div>
+           
         </div>
     </div>
 </div>
@@ -62,11 +42,5 @@
         document.querySelectorAll(".toggle-btn")[0].classList.add("active");
     }
 
-    function showRegister() {
-        document.getElementById("loginForm").style.display = "none";
-        document.getElementById("registerForm").style.display = "block";
-        document.querySelector(".toggle-btn.active").classList.remove("active");
-        document.querySelectorAll(".toggle-btn")[1].classList.add("active");
-    }
 </script>
 {% endblock %}

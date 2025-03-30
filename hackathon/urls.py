@@ -1,20 +1,12 @@
-from django.contrib import admin
 from django.urls import path
-from hackathon import views
-from hackathon.views import * 
-from django.contrib.auth.views import LoginView  
-from django.conf import settings
-from django.conf.urls.static import static
-
+from .views import home, register, user_login, learner, instructor, courses, logout_view
 
 urlpatterns = [
-    path("", views.home, name='hackathon'),  
-    path('logout/', logout_view, name='logout'), 
-    path('login/', views.login, name='login'), 
-    path("register/", views.register, name="register"),
-    path("courses/", views.courses, name="courses"),
-
-
-
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
+    path("", home, name="home"),
+    path("register/", register, name="register"),
+    path("login/", user_login, name="user_login"),  # Changed from 'login' to 'user_login'
+    path("learner/", learner, name="learner"),
+    path("instructor/", instructor, name="instructor"),
+    path("courses/", courses, name="courses"),
+    path("logout/", logout_view, name="logout"),
+]

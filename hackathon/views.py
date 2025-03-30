@@ -1,38 +1,85 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import logout
-from .forms import CustomUserCreationForm
-from .models import Course
+from .models import Course, CustomUser
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+
+User = get_user_model()  # Get the custom user model
+
+def register(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        email = request.POST["email"]
+        password1 = request.POST["password1"]
+        password2 = request.POST["password2"]
+        user_type = request.POST.get("user_type", "learner")  # Default to 'learner'
+
+        if password1 != password2:
+            messages.error(request, "Passwords do not match!")
+            return redirect("register")
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists!")
+            return redirect("register")
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email already registered!")
+            return redirect("register")
+
+        user = User.objects.create_user(username=username, email=email, password=password1)
+        user.user_type = user_type  # Ensure CustomUser has this field
+        user.save()
+
+        messages.success(request, "Account created successfully! Please log in.")
+        return redirect("user_login")  # Redirect to login page
+
+    return render(request, "register.html")
+
 
 def home(request):
-    return render(request, 'index.html')
-
-def dashboard_redirect(request):
-    if request.user.user_type == "student":
-        return redirect("student_dashboard")
-    elif request.user.user_type == "instructor":
-        return redirect("instructor_dashboard")
-    return redirect("home")
+    return render(request, "index.html")
 
 
-def login(request):
-    return render(request, 'login.html')
+def user_login(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            auth_login(request, user)  # Use auth_login to avoid conflicts
+            
+            # Redirect based on user type
+            if user.user_type == "learner":
+                return redirect("learner")  
+            elif user.user_type == "instructor":
+                return redirect("instructor")  
+            else:
+                return redirect("home")  
+
+        else:
+            messages.error(request, "Invalid username or password.")
+            return redirect("user_login")
+
+    return render(request, "login.html")
+
+
+@login_required
+def learner(request):
+    return render(request, "learner.html")
+
+
+@login_required
+def instructor(request):
+    return render(request, "instructor.html")
 
 
 def courses(request):
     courses = Course.objects.all()
-    return render(request, 'courses.html', {'courses': courses})
+    return render(request, "courses.html", {"courses": courses})
 
-def register(request):
-    if request.method == "POST":
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')  # Redirect to login after successful registration
-    else:
-        form = CustomUserCreationForm()
-    return render(request, "register.html", {"form": form})
 
 def logout_view(request):
-    logout(request)  
-    return redirect('login')  
+    auth_logout(request)  # Use auth_logout to avoid conflicts
+    return redirect("user_login")

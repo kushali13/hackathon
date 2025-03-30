@@ -12,10 +12,10 @@ class Course(models.Model):
 
 class CustomUser(AbstractUser):
     USER_TYPE_CHOICES = (
-        ('student', 'Student'),
+        ('learner', 'Learner'),
         ('instructor', 'Instructor'),
     )
-    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='student')
+    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='learner')
 
     # Fixing the clash issues
     groups = models.ManyToManyField(
@@ -28,9 +28,5 @@ class CustomUser(AbstractUser):
         related_name="customuser_permissions",  # Change related_name to avoid conflict
         blank=True
     )
-
-
-
-
 
 

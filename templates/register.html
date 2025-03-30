@@ -27,8 +27,8 @@
                 <label class="form-label fw-bold">Register as:</label>
                 <div class="d-flex">
                     <div class="form-check me-4">
-                        <input class="form-check-input" type="radio" name="user_type" value="student" id="student" checked>
-                        <label class="form-check-label" for="student">Student</label>
+                        <input class="form-check-input" type="radio" name="user_type" value="learner" id="learner" checked>
+                        <label class="form-check-label" for="learner">Learner</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="user_type" value="instructor" id="instructor">
@@ -53,7 +53,7 @@
         </form>
 
         <p class="text-center mt-3">Already have an account?  
-            <a href="{% url 'login' %}" class="text-decoration-none fw-bold">Login here</a>
+            <a href="{% url 'user_login' %}" class="text-decoration-none fw-bold">Login here</a>
         </p>
     </div>
 </div>
