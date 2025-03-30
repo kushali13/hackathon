@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Course, CustomUser,LearnerProfile
+from .models import Course, CustomUser,LearnerProfile,InstructorProfile
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -103,6 +103,28 @@ def update_learner_profile(request):
         learner_profile.city = data.get("city", learner_profile.city)
         
         learner_profile.save()
+        return JsonResponse({"success": True})
+    
+    return JsonResponse({"success": False})
+
+
+@login_required
+def instructor_profile(request):
+    instructor_profile, created = InstructorProfile.objects.get_or_create(user=request.user)
+    return render(request, 'instructor_profile.html', {'instructor_profile': instructor_profile})
+
+@login_required
+def update_instructor_profile(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        instructor_profile, created = InstructorProfile.objects.get_or_create(user=request.user)
+        
+        instructor_profile.courses = data.get("courses", instructor_profile.courses)
+        instructor_profile.age = data.get("age", instructor_profile.age)
+        instructor_profile.state = data.get("state", instructor_profile.state)
+        instructor_profile.city = data.get("city", instructor_profile.city)
+        
+        instructor_profile.save()
         return JsonResponse({"success": True})
     
     return JsonResponse({"success": False})
