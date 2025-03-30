@@ -35,8 +35,8 @@
                             <i class="fa-regular fa-user fa-lg"></i> 
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">View Profile</a></li>
-                            <li><a class="dropdown-item" href="#">Edit Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'learner_profile' %}">View Profile</a></li>
+
                         </ul>
                     </li>
 
@@ -51,6 +51,25 @@
             </div>
         </div>
     </nav>
+
+
+    <div class="container my-5">
+        <h2 class="text-center">Explore Our Courses</h2>
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <img src="{% static 'images/coding.jpg' %}" style="height: 200px; object-fit: cover"  class="card-img-top" alt="Coding">
+                <div class="card-body">
+                    <h5 class="card-title">Coding & Programming</h5>
+                    <p class="card-text">Learn Python, JavaScript, and more.</p>
+                    <a href="{% url 'register' %}" class="btn btn-primary">View Course</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
     <div class="container mt-4">
         {% block content %}{% endblock %}

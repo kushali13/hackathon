@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Course
+from .models import CustomUser, LearnerProfile
 
-@admin.register(Course)
-class CourseAdmin(admin.ModelAdmin):
-    list_display = ('title',)  # Display course title in admin panel
+admin.site.register(CustomUser)   # Ensure CustomUser is registered
+admin.site.register(LearnerProfile)  # Register LearnerProfile model

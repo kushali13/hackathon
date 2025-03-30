@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
-from .models import Course, CustomUser
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Course, CustomUser,LearnerProfile
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+import json
 
 User = get_user_model()  # Get the custom user model
 
@@ -83,3 +85,24 @@ def courses(request):
 def logout_view(request):
     auth_logout(request)  # Use auth_logout to avoid conflicts
     return redirect("user_login")
+
+@login_required
+def learner_profile(request):
+    learner_profile, created = LearnerProfile.objects.get_or_create(user=request.user)
+    return render(request, 'learner_profile.html', {'learner_profile': learner_profile})
+
+@login_required
+def update_learner_profile(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        learner_profile, created = LearnerProfile.objects.get_or_create(user=request.user)
+        
+        learner_profile.courses = data.get("courses", learner_profile.courses)
+        learner_profile.age = data.get("age", learner_profile.age)
+        learner_profile.state = data.get("state", learner_profile.state)
+        learner_profile.city = data.get("city", learner_profile.city)
+        
+        learner_profile.save()
+        return JsonResponse({"success": True})
+    
+    return JsonResponse({"success": False})
