@@ -7,9 +7,7 @@
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="auth-container shadow p-4 rounded bg-white">
         <!-- LOGIN & SIGNUP TOGGLE -->
-        <div class="toggle-buttons mb-3">
-            <button class="toggle-btn active" onclick="showLogin()">Login</button>
-        </div>
+
 
         <div class="form-container">
             <!-- SIGN IN FORM -->
@@ -25,6 +23,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Login</button>
                     <p class="text-center mt-2"><a href="#">Forgot Password?</a></p>
+                    <p class=" text-black text-center mt2">Don't have Account <a class="link-offset-2 link-underline link-underline-opacity-0" href=" {% url 'register' %} ">SignUp</a></p>
                 </form>
             </div>
 

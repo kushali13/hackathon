@@ -14,7 +14,7 @@
     <nav class="navbar navbar-expand-lg custom-navbar">
         <div class="container">
             
-            <a class="navbar-brand" href="#">UpSkillers</a>
+            <a class="navbar-brand" href="{% url 'home' %}">UpSkillers</a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -24,8 +24,12 @@
                 <ul class="navbar-nav align-items-center">
 
                     <li class="nav-item">
-                        <a class="nav-link me-3" href="#">Enrolled Users <span class="badge bg-primary">{% if enrolled_users %}{{ enrolled_users }}{% else %}0{% endif %}</span></a>
+                        <a class="nav-link text-black " href="{% url 'instructor' %}">Dashboard <span class="badge bg-primary"></span></a>
                     </li>
+
+                    <!-- <li class="nav-item">
+                        <a class="nav-link me-1" href="#">Enrolled Users <span class="badge bg-primary">{% if enrolled_users %}{{ enrolled_users }}{% else %}0{% endif %}</span></a>
+                    </li> -->
 
                     <li class="nav-item">
                         <a class="nav-link text-black ms-3" href=" {%url 'add_course' %} ">Create Course</a>

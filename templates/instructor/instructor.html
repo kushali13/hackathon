@@ -1,0 +1,75 @@
+{% extends "instructor/instructor_base.html" %}
+
+{% block title %}Instructor Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Welcome Section -->
+    <div class="card shadow-sm p-4 mb-4 bg-white rounded">
+        <h2>Welcome, {{ request.user.first_name }}!</h2>
+        <p class="text-muted">Manage your courses and students from here.</p>
+    </div>
+
+    <!-- Dashboard Stats -->
+    <div class="row text-center">
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 mb-4 bg-primary text-white">
+                <h4>Total Courses</h4>
+                <h2>{{ instructor_courses|length }}</h2>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 mb-4 bg-success text-white">
+                <h4>Total Students Enrolled</h4>
+                <h2>{{ total_enrolled_students }}</h2>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 mb-4 bg-warning text-white">
+                <h4>Active Courses</h4>
+                <h2>{{ active_courses }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course List Section -->
+    <div class="card shadow-sm p-4 mb-4">
+        <h3>My Courses</h3>
+        {% if instructor_courses %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Enrolled Students</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in instructor_courses %}
+                <tr>
+                    <td>{{ course.title }}</td>
+                    <td>{{ course.enrolled_students }}</td>
+                    <td>{{ course.start_date }}</td>
+                    <td>{{ course.end_date }}</td>
+                    <td>
+                        <a href="{% url 'edit_course' course.id %}" class="btn btn-sm btn-info">Edit</a>
+                        <a href="" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted">You haven't created any courses yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Add Course Button -->
+    <div class="text-center">
+        <a href="{% url 'add_course' %}" class="btn btn-primary">Add New Course</a>
+    </div>
+</div>
+
+{% endblock %}
