@@ -16,8 +16,8 @@
     <div class="row" id="coursesContainer">
         {% for course in courses %}
         <div class="col-md-4 course-card">
-            <div class="card">
-                <img src="{{ course.image.url }}" style="height: 200px; object-fit: cover" class="card-img-top" alt="{{ course.title }}">
+            <div class="card" >
+                <img src="{{ course.image.url }}" style="height: 200px;width:200px;justify-content:center; object-fit: cover" class="card-img-top" alt="{{ course.title }}">
                 <div class="card-body">
                     <h5 class="card-title">{{ course.title }}</h5>
                     <p class="card-text">{{ course.description|truncatewords:15 }}</p>
