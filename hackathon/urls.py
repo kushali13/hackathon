@@ -8,6 +8,7 @@ urlpatterns = [
     path("login/", user_login, name="user_login"), 
     path("logout/", logout_view, name="logout"),
     path("courses/", courses, name="courses"),
+    path('index_courses/', index_courses, name='index_courses'),
 
     # Learner URLs
     path("learner/", learner, name="learner"),

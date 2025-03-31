@@ -68,6 +68,10 @@ def courses(request):
     courses = Course.objects.all()
     return render(request, "courses.html", {"courses": courses})
 
+
+def index_courses(request):
+    return render(request, 'index_courses.html')
+
 @login_required
 def learner(request):
     return render(request, "learner/learner.html")
