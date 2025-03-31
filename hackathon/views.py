@@ -71,10 +71,18 @@ def user_login(request):
 def learner(request):
     return render(request, "learner.html")
 
-
 @login_required
 def instructor(request):
-    return render(request, "instructor.html")
+    instructor_courses = Course.objects.filter(instructor=request.user)
+    total_enrolled_students = sum(course.enrolled_students for course in instructor_courses)
+    active_courses = instructor_courses.filter(is_active=True).count()
+
+    context = {
+        "instructor_courses": instructor_courses,
+        "total_enrolled_students": total_enrolled_students,
+        "active_courses": active_courses,
+    }
+    return render(request, "instructor/instructor.html", context)
 
 
 def courses(request):
@@ -110,7 +118,29 @@ def add_course(request):
         messages.success(request, "Course added successfully!")
         return redirect("courses")
 
-    return render(request, "add_course.html")
+    return render(request, "instructor/add_course.html")
+
+def edit_course(request, course_id):
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+
+    if request.method == "POST":
+        course.title = request.POST["title"]
+        course.description = request.POST["description"]
+        course.start_date = request.POST["start_date"]
+        course.end_date = request.POST["end_date"]
+        course.price = request.POST["price"]
+        course.syllabus = request.POST["syllabus"]
+        course.prerequisites = request.POST["prerequisites"]
+        course.is_active = request.POST["is_active"] == "True"
+
+        if "image" in request.FILES:
+            course.image = request.FILES["image"]
+
+        course.save()
+        return redirect("/instructor")
+
+    return render(request, "instructor/edit_course.html", {"course": course})
+
 
 def logout_view(request):
     auth_logout(request)  # Use auth_logout to avoid conflicts
@@ -119,7 +149,7 @@ def logout_view(request):
 @login_required
 def learner_profile(request):
     learner_profile, created = LearnerProfile.objects.get_or_create(user=request.user)
-    return render(request, 'learner_profile.html', {'learner_profile': learner_profile})
+    return render(request, 'learner/learner_profile.html', {'learner_profile': learner_profile})
 
 @login_required
 def update_learner_profile(request):
@@ -141,7 +171,7 @@ def update_learner_profile(request):
 @login_required
 def instructor_profile(request):
     instructor_profile, created = InstructorProfile.objects.get_or_create(user=request.user)
-    return render(request, 'instructor_profile.html', {'instructor_profile': instructor_profile})
+    return render(request, 'instructor/instructor_profile.html', {'instructor_profile': instructor_profile})
 
 @login_required
 def update_instructor_profile(request):
