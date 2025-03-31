@@ -9,6 +9,9 @@ import json
 
 User = get_user_model()  # Get the custom user model
 
+def home(request):
+    return render(request, "index.html")
+
 def register(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -38,11 +41,6 @@ def register(request):
 
     return render(request, "register.html")
 
-
-def home(request):
-    return render(request, "index.html")
-
-
 def user_login(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -66,11 +64,22 @@ def user_login(request):
 
     return render(request, "login.html")
 
+def courses(request):
+    courses = Course.objects.all()
+    return render(request, "courses.html", {"courses": courses})
 
 @login_required
 def learner(request):
-    return render(request, "learner.html")
+    return render(request, "learner/learner.html")
 
+def logout_view(request):
+    auth_logout(request)  
+    return redirect("user_login")
+
+
+
+
+# INSTRUCTOR VIEWS
 @login_required
 def instructor(request):
     instructor_courses = Course.objects.filter(instructor=request.user)
@@ -83,11 +92,6 @@ def instructor(request):
         "active_courses": active_courses,
     }
     return render(request, "instructor/instructor.html", context)
-
-
-def courses(request):
-    courses = Course.objects.all()
-    return render(request, "courses.html", {"courses": courses})
 
 def add_course(request):
     if request.method == "POST":
@@ -117,7 +121,6 @@ def add_course(request):
 
         messages.success(request, "Course added successfully!")
         return redirect("courses")
-
     return render(request, "instructor/add_course.html")
 
 def edit_course(request, course_id):
@@ -141,11 +144,29 @@ def edit_course(request, course_id):
 
     return render(request, "instructor/edit_course.html", {"course": course})
 
+@login_required
+def instructor_profile(request):
+    instructor_profile, created = InstructorProfile.objects.get_or_create(user=request.user)
+    return render(request, 'instructor/instructor_profile.html', {'instructor_profile': instructor_profile})
 
-def logout_view(request):
-    auth_logout(request)  # Use auth_logout to avoid conflicts
-    return redirect("user_login")
+@login_required
+def update_instructor_profile(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        instructor_profile, created = InstructorProfile.objects.get_or_create(user=request.user)
+        
+        instructor_profile.courses = data.get("courses", instructor_profile.courses)
+        instructor_profile.age = data.get("age", instructor_profile.age)
+        instructor_profile.state = data.get("state", instructor_profile.state)
+        instructor_profile.city = data.get("city", instructor_profile.city)
+        
+        instructor_profile.save()
+        return JsonResponse({"success": True})
+    
+    return JsonResponse({"success": False})
 
+
+# LEARNER VIEWS
 @login_required
 def learner_profile(request):
     learner_profile, created = LearnerProfile.objects.get_or_create(user=request.user)
@@ -168,23 +189,3 @@ def update_learner_profile(request):
     return JsonResponse({"success": False})
 
 
-@login_required
-def instructor_profile(request):
-    instructor_profile, created = InstructorProfile.objects.get_or_create(user=request.user)
-    return render(request, 'instructor/instructor_profile.html', {'instructor_profile': instructor_profile})
-
-@login_required
-def update_instructor_profile(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        instructor_profile, created = InstructorProfile.objects.get_or_create(user=request.user)
-        
-        instructor_profile.courses = data.get("courses", instructor_profile.courses)
-        instructor_profile.age = data.get("age", instructor_profile.age)
-        instructor_profile.state = data.get("state", instructor_profile.state)
-        instructor_profile.city = data.get("city", instructor_profile.city)
-        
-        instructor_profile.save()
-        return JsonResponse({"success": True})
-    
-    return JsonResponse({"success": False})
