@@ -10,48 +10,64 @@
                 <td>{{ user.username }}</td>
             </tr>
             <tr>
-                <th>Firstname</th>
-                <td>{{ user.first_name }}</td>
+                <th>First Name</th>
+                <td><input type="text" name="first_name" id="first_name" class="form-control" value="{{ user.first_name|default_if_none:'' }}"></td>
             </tr>
             <tr>
-                <th>Lastname</th>
-                <td>{{ user.last_name }}</td>
+                <th>Last Name</th>
+                <td><input type="text" name="last_name" id="last_name" class="form-control" value="{{ user.last_name|default_if_none:'' }}"></td>
             </tr>
             <tr>
                 <th>Email</th>
                 <td>{{ user.email }}</td>
             </tr>
             <tr>
-                <th>Courses</th>
-                <td><input type="text" name="courses" id="courses" value="{{ learner_profile.courses|default_if_none:'' }}"></td>
+                <th>Bio</th>
+                <td><textarea name="bio" id="bio" class="form-control">{{ instructor_profile.bio|default_if_none:'' }}</textarea></td>
             </tr>
             <tr>
-                <th>Age</th>
-                <td><input type="number" name="age" id="age" value="{{ learner_profile.age|default_if_none:'' }}"></td>
+                <th>Experience (years)</th>
+                <td><input type="number" name="experience" id="experience" class="form-control" value="{{ instructor_profile.experience|default_if_none:'' }}"></td>
             </tr>
             <tr>
-                <th>State</th>
-                <td><input type="text" name="state" id="state" value="{{ learner_profile.state|default_if_none:'' }}"></td>
+                <th>Skills</th>
+                <td><input type="text" name="skills" id="skills" class="form-control" value="{{ instructor_profile.skills|default_if_none:'' }}"></td>
             </tr>
             <tr>
-                <th>City</th>
-                <td><input type="text" name="city" id="city" value="{{ learner_profile.city|default_if_none:'' }}"></td>
+                <th>LinkedIn</th>
+                <td><input type="url" name="linkedin" id="linkedin" class="form-control" value="{{ instructor_profile.linkedin|default_if_none:'' }}"></td>
+            </tr>
+            <tr>
+                <th>GitHub</th>
+                <td><input type="url" name="github" id="github" class="form-control" value="{{ instructor_profile.github|default_if_none:'' }}"></td>
+            </tr>
+            <tr>
+                <th>Website</th>
+                <td><input type="url" name="website" id="website" class="form-control" value="{{ instructor_profile.website|default_if_none:'' }}"></td>
+            </tr>
+            <tr>
+                <th>Verification Status</th>
+                <td>{{ instructor_profile.is_verified|yesno:"Verified,Pending" }}</td>
             </tr>
         </table>
-        <button id="editButton" class="btn btn-primary">Edit</button>
+        <button id="editButton" class="btn btn-primary">Update Profile</button>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             let editButton = document.getElementById("editButton");
-
-            if (editButton) { 
+    
+            if (editButton) {
                 editButton.addEventListener("click", function () {
-                    let courses = document.getElementById("courses").value;
-                    let age = document.getElementById("age").value;
-                    let state = document.getElementById("state").value;
-                    let city = document.getElementById("city").value;
-
+                    let first_name = document.getElementById("first_name").value;
+                    let last_name = document.getElementById("last_name").value;
+                    let bio = document.getElementById("bio").value;
+                    let experience = document.getElementById("experience").value;
+                    let skills = document.getElementById("skills").value;
+                    let linkedin = document.getElementById("linkedin").value;
+                    let github = document.getElementById("github").value;
+                    let website = document.getElementById("website").value;
+    
                     fetch("{% url 'update_instructor_profile' %}", {
                         method: "POST",
                         headers: {
@@ -59,16 +75,21 @@
                             "X-CSRFToken": "{{ csrf_token }}"
                         },
                         body: JSON.stringify({
-                            courses: courses,
-                            age: age,
-                            state: state,
-                            city: city
+                            first_name: first_name,
+                            last_name: last_name,
+                            bio: bio,
+                            experience: experience,
+                            skills: skills,
+                            linkedin: linkedin,
+                            github: github,
+                            website: website
                         })
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
                             alert("Profile updated successfully!");
+                            location.reload();  // Refresh page to reflect changes
                         } else {
                             alert("Error updating profile.");
                         }
@@ -80,5 +101,6 @@
             }
         });
     </script>
+    
 
 {% endblock %}

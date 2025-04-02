@@ -1,5 +1,7 @@
 from django.urls import path
 from .views import *
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     # Admin URLs
@@ -22,4 +24,5 @@ urlpatterns = [
     path('instructor/add-course/', add_course, name='add_course'), 
     path("instructor/course/edit/<int:course_id>/", edit_course, name="edit_course"),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

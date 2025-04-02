@@ -78,12 +78,11 @@ def logout_view(request):
 
 
 
-
 # INSTRUCTOR VIEWS
 @login_required
 def instructor(request):
     instructor_courses = Course.objects.filter(instructor=request.user)
-    total_enrolled_students = sum(course.enrolled_students for course in instructor_courses)
+    total_enrolled_students = sum(course.students_enrolled.all().count() for course in instructor_courses)  
     active_courses = instructor_courses.filter(is_active=True).count()
 
     context = {
@@ -93,35 +92,65 @@ def instructor(request):
     }
     return render(request, "instructor/instructor.html", context)
 
+@login_required
 def add_course(request):
     if request.method == "POST":
         title = request.POST["title"]
         description = request.POST["description"]
-        image = request.FILES["image"]
-        instructor = request.user  # Assuming the logged-in user is the instructor
+        image = request.FILES.get("image")
+        video_url = request.POST.get("video_url", "")
+        level = request.POST["level"]
+        language = request.POST["language"]
+        duration = request.POST["duration"]
         start_date = request.POST["start_date"]
         end_date = request.POST["end_date"]
         price = request.POST["price"]
-        syllabus = request.POST.get("syllabus", "")
+        content = request.POST.get("content", "")
         prerequisites = request.POST.get("prerequisites", "")
-        course_materials = request.POST.get("course_materials", "")
+        course_outcomes = request.POST.get("course_outcomes", "")
+        is_active = request.POST.get("is_active", "off") == "on"
+        is_featured = request.POST.get("is_featured", "off") == "on"
+        
+        instructor = request.user  # Assuming logged-in user is the instructor
 
+        # Create course object
         course = Course.objects.create(
             title=title,
             description=description,
             image=image,
+            video_url=video_url,
+            level=level,
+            language=language,
+            duration=duration,
             instructor=instructor,
             start_date=start_date,
             end_date=end_date,
             price=price,
-            syllabus=syllabus,
+            content=content,
             prerequisites=prerequisites,
-            course_materials=course_materials
+            course_outcomes=course_outcomes,
+            is_active=is_active,
+            is_featured=is_featured
         )
 
-        messages.success(request, "Course added successfully!")
-        return redirect("courses")
-    return render(request, "instructor/add_course.html")
+        # Handling Many-to-Many relationships
+        category_ids = request.POST.getlist("categories")
+        subcategory_ids = request.POST.getlist("subcategories")
+
+        course.categories.set(Category.objects.filter(id__in=category_ids))
+        course.subcategories.set(Subcategory.objects.filter(id__in=subcategory_ids))
+
+        messages.success(request, "✅ Course added successfully!")
+        return redirect("/instructor")
+
+    # Passing categories and subcategories for the form dropdowns
+    categories = Category.objects.all()
+    subcategories = Subcategory.objects.all()
+    
+    return render(request, "instructor/add_course.html", {
+        "categories": categories,
+        "subcategories": subcategories
+    })
 
 def edit_course(request, course_id):
     course = get_object_or_404(Course, id=course_id, instructor=request.user)
@@ -153,18 +182,26 @@ def instructor_profile(request):
 def update_instructor_profile(request):
     if request.method == "POST":
         data = json.loads(request.body)
-        instructor_profile, created = InstructorProfile.objects.get_or_create(user=request.user)
-        
-        instructor_profile.courses = data.get("courses", instructor_profile.courses)
-        instructor_profile.age = data.get("age", instructor_profile.age)
-        instructor_profile.state = data.get("state", instructor_profile.state)
-        instructor_profile.city = data.get("city", instructor_profile.city)
-        
-        instructor_profile.save()
+        user = request.user  # Get the logged-in user
+        instructor_profile, created = InstructorProfile.objects.get_or_create(user=user)
+
+        # Update user details
+        user.first_name = data.get("first_name", user.first_name)
+        user.last_name = data.get("last_name", user.last_name)
+        user.save()  # Save user model
+
+        # Update instructor profile details
+        instructor_profile.bio = data.get("bio", instructor_profile.bio)
+        instructor_profile.experience = data.get("experience", instructor_profile.experience)
+        instructor_profile.skills = data.get("skills", instructor_profile.skills)
+        instructor_profile.linkedin = data.get("linkedin", instructor_profile.linkedin)
+        instructor_profile.github = data.get("github", instructor_profile.github)
+        instructor_profile.website = data.get("website", instructor_profile.website)
+        instructor_profile.save()  # Save profile model
+
         return JsonResponse({"success": True})
     
     return JsonResponse({"success": False})
-
 
 # LEARNER VIEWS
 @login_required

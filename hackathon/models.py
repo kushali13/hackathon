@@ -37,7 +37,7 @@ class Subcategory(models.Model):
 class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    image = models.ImageField(upload_to='media/courses/')
+    image = models.ImageField(upload_to='courses/')
     video_url = models.URLField(blank=True, null=True)  # Stores video links (YouTube/Vimeo)
     level = models.CharField(max_length=50, choices=[('beginner', 'Beginner'), ('intermediate', 'Intermediate'), ('advanced', 'Advanced')])
     language = models.CharField(max_length=50, choices=[('english', 'English'), ('spanish', 'Spanish'), ('french', 'French')])
