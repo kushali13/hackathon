@@ -1,18 +1,23 @@
 from django.contrib import admin
-from .models import CustomUser, LearnerProfile, Course, InstructorProfile  # Ensure Course is imported
+from .models import *
 
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'user_type')
+    list_display = ('username', 'email')
 
-@admin.register(LearnerProfile)
-class LearnerProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'courses', 'age', 'state', 'city')
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug')
 
-@admin.register(InstructorProfile)
-class InstructorProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'courses', 'age', 'state', 'city')
+@admin.register(Subcategory)
+class SubcategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'category')
+    list_filter = ('category',)
+    search_fields = ('name', 'category__name')
+
+
+
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('title',)  # Removed 'instructor' since it's not in your Course model
+    list_display = ('title',) 

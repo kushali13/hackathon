@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Course, CustomUser,LearnerProfile,InstructorProfile
+from .models import *
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -71,10 +71,6 @@ def courses(request):
 
 def index_courses(request):
     return render(request, 'index_courses.html')
-
-@login_required
-def learner(request):
-    return render(request, "learner/learner.html")
 
 def logout_view(request):
     auth_logout(request)  
@@ -172,8 +168,13 @@ def update_instructor_profile(request):
 
 # LEARNER VIEWS
 @login_required
+def learner(request):
+    courses = Course.objects.all()
+    return render(request, 'learner/learner.html ',{'courses': courses})
+
+@login_required
 def learner_profile(request):
-    learner_profile, created = LearnerProfile.objects.get_or_create(user=request.user)
+    learner_profile = LearnerProfile.objects.get_or_create(user=request.user)
     return render(request, 'learner/learner_profile.html', {'learner_profile': learner_profile})
 
 @login_required

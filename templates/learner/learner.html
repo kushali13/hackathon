@@ -55,18 +55,23 @@
 
     <div class="container my-5">
         <h2 class="text-center">Explore Our Courses</h2>
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <img src="{% static 'images/coding.jpg' %}" style="height: 200px; object-fit: cover"  class="card-img-top" alt="Coding">
-                <div class="card-body">
-                    <h5 class="card-title">Coding & Programming</h5>
-                    <p class="card-text">Learn Python, JavaScript, and more.</p>
-                    <a href="{% url 'register' %}" class="btn btn-primary">View Course</a>
+        <div class="row" id="coursesContainer">
+            {% for course in courses %}
+            <div class="col-md-4 course-card">
+                <div class="card" >
+                    <img src="{{ course.image.url }}" style="height: 200px;width:200px;justify-content:center; object-fit: cover" class="card-img-top" alt="{{ course.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course.title }}</h5>
+                        <p class="card-text">{{ course.description|truncatewords:15 }}</p>
+                        <a href="" class="btn btn-primary">View Course</a>
+                    </div>
                 </div>
             </div>
+            {% empty %}
+            <p class="text-center">No courses available at the moment.</p>
+            {% endfor %}
         </div>
-    </div>
+    
 </div>
 
 
