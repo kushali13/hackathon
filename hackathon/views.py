@@ -9,8 +9,12 @@ import json
 
 User = get_user_model()  # Get the custom user model
 
+
 def home(request):
-    return render(request, "index.html")
+    featured_courses = Course.objects.filter(is_featured=True)[:3]  # Fetch only 3 featured courses
+    print("Featured Courses:", featured_courses)  # Debugging
+    return render(request, 'index.html', {'featured_courses': featured_courses})
+
 
 def register(request):
     if request.method == "POST":
@@ -69,12 +73,10 @@ def courses(request):
     return render(request, "courses.html", {"courses": courses})
 
 
-def index_courses(request):
-    return render(request, 'index_courses.html')
 
 def logout_view(request):
     auth_logout(request)  
-    return redirect("user_login")
+    return redirect("home")
 
 
 
@@ -98,7 +100,7 @@ def add_course(request):
         title = request.POST["title"]
         description = request.POST["description"]
         image = request.FILES.get("image")
-        video_url = request.POST.get("video_url", "")
+        video_url = request.FILES.get("video")
         level = request.POST["level"]
         language = request.POST["language"]
         duration = request.POST["duration"]
@@ -118,7 +120,7 @@ def add_course(request):
             title=title,
             description=description,
             image=image,
-            video_url=video_url,
+            video=video_url,
             level=level,
             language=language,
             duration=duration,
@@ -168,10 +170,19 @@ def edit_course(request, course_id):
         if "image" in request.FILES:
             course.image = request.FILES["image"]
 
+        if "video" in request.FILES:
+            course.video = request.FILES["video"]
+
         course.save()
         return redirect("/instructor")
 
     return render(request, "instructor/edit_course.html", {"course": course})
+
+def course_detail(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    return render(request, "course_detail.html", {"course": course})
+
+
 
 @login_required
 def instructor_profile(request):

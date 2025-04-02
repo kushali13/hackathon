@@ -1,89 +1,90 @@
 {% extends "base/base.html" %}
 {% load static %}  <!-- Load static files -->
 
-
 {% block title %}Home - UpSkillers{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
     <!-- Hero Section -->
-    <div class="jumbotron text-center p-5 bg-light rounded">
-        <h1 class="display-4">Welcome to UpSkillers!</h1>
+    <div class="jumbotron text-center p-5 bg-light rounded animate__animated animate__fadeIn">
+        <h1 class="display-4">Welcome to UpSkillers! 🚀</h1>
         <p class="lead">Develop your skills with our platform.</p>
         <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Get Started</a>
-
     </div>
 
-    <!-- Skill Categories -->
+    <!-- Featured Courses Section -->
     <div class="container my-5">
-        <h2 class="text-center">Explore Our Courses</h2>
+        <h2 class="text-center">🔥 Explore Our Featured Courses</h2>
         <p class="text-center">Learn new skills with our expert-led courses.</p>
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <img src="{% static 'images/coding.jpg' %}" style="height: 200px; object-fit: cover"  class="card-img-top" alt="Coding">
-                <div class="card-body">
-                    <h5 class="card-title">Coding & Programming</h5>
-                    <p class="card-text">Learn Python, JavaScript, and more.</p>
-                    <a href="{% url 'register' %}" class="btn btn-primary">View Course</a>
+        <div class="row mt-4">
+            {% for course in featured_courses %}
+            <div class="col-md-4 col-sm-12">
+                <div class="card shadow-sm animate__animated animate__zoomIn">
+                    <img src="{{ course.image.url }}" style="height: 200px; object-fit: cover" class="card-img-top" alt="{{ course.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course.title }}</h5>
+                        <p class="card-text">{{ course.description|truncatechars:100 }}</p> <!-- Short description -->
+                        <a href="{% url 'course_detail' course.id %}" class="btn btn-primary">View Course</a>
+                    </div>
                 </div>
             </div>
+            {% empty %}
+            <p class="text-center">No featured courses available.</p>
+            {% endfor %}
         </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <img src="{% static 'images/cooking.jpg' %}" style="height: 200px; object-fit: cover" class="card-img-top" alt="Cooking">
-                <div class="card-body">
-                    <h5 class="card-title">Cooking & Culinary Arts</h5>
-                    <p class="card-text">Master the art of cooking delicious dishes.</p>
-                    <a href="{% url 'register' %}" class="btn btn-primary">View Course</a>
 
-                </div>
-            </div>
+        <!-- "See More Courses" Button -->
+        <div class="text-center mt-4">
+            <a href="{% url 'courses' %}" class="btn btn-outline-primary btn-lg animate__animated animate__pulse animate__infinite">See More Courses</a>
         </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <img src="{% static 'images/speaking.jpg' %}" style="height: 200px; object-fit: cover" class="card-img-top"  alt="Speaking Skills">
-                <div class="card-body">
-                    <h5 class="card-title">Public Speaking</h5>
-                    <p class="card-text">Improve your communication skills.</p>
-                    <a href="{% url 'register' %}" class="btn btn-primary">View Course</a>
-                </div>
-            </div>
-        </div>
-              <!-- "See More Courses" Button -->
-      <div class="text-center mt-4">
-        <a href="{% url 'courses' %}" class="btn btn-outline-primary btn-lg">See More Courses</a>
     </div>
-    </div>
-
-
-
-  
 
     <!-- Why Choose Us Section -->
-    <h3 class="mt-5 text-center">Why Choose UpSkillers?</h3>
+    <h3 class="mt-5 text-center">⭐ Why Choose UpSkillers?</h3>
     <div class="row text-center mt-4">
-        <div class="col-md-4">
+        <div class="col-md-4 animate__animated animate__fadeInLeft">
             <i class="fas fa-users fa-3x text-primary"></i>
             <h5 class="mt-3">Expert Instructors</h5>
             <p>Learn from industry professionals.</p>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 animate__animated animate__fadeInUp">
             <i class="fas fa-laptop-code fa-3x text-primary"></i>
             <h5 class="mt-3">Hands-On Learning</h5>
             <p>Practice with real-world projects.</p>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 animate__animated animate__fadeInRight">
             <i class="fas fa-certificate fa-3x text-primary"></i>
             <h5 class="mt-3">Certification</h5>
             <p>Get certified and boost your career.</p>
         </div>
     </div>
+
+    <!-- Testimonials Section -->
+    <h3 class="mt-5 mb-3 text-center">💬 What Our Students Say</h3>
+    <div class="row mt-4 mb-3">
+        <div class="col-md-4 mb-2 col-sm-12 animate__animated animate__zoomIn">
+            <div class="card shadow-sm p-3">
+                <p>“The hands-on courses helped me land my dream job.”</p>
+                <strong>- Sarah J.</strong>
+            </div>
+        </div>
+        <div class="col-md-4 mb-2 col-sm-12 animate__animated animate__zoomIn">
+            <div class="card shadow-sm p-3">
+                <p>“The expert instructors make complex topics so easy to understand!”</p>
+                <strong>- Rahul M.</strong>
+            </div>
+        </div>
+        <div class="col-md-4 mb-2 col-sm-12 animate__animated animate__zoomIn">
+            <div class="card shadow-sm p-3">
+                <p>“I love the real-world projects. It gave me confidence in my skills.”</p>
+                <strong>- Emily R.</strong>
+            </div>
+        </div>
+    </div>
+
 </div>
 
+<!-- Add Animation Library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
-
-
-
-</div>
 {% endblock %}

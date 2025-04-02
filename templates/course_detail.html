@@ -1,0 +1,108 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Left: Course Details -->
+        <div class="col-lg-6 order-2 order-lg-1">
+            <h1 class="text-primary fw-bold">{{ course.title }}</h1>
+            <p class="fs-5"><strong>👨‍🏫 Instructor:</strong> {{ course.instructor.first_name }} {{ course.instructor.last_name }}</p>
+            <p class="fs-6"><strong>📌 Level:</strong> <span class="badge bg-secondary">{{ course.get_level_display }}</span></p>
+            <p class="fs-6"><strong>🗣 Language:</strong> <span class="badge bg-success">{{ course.get_language_display }}</span></p>
+            <p class="fs-6"><strong>⏳ Duration:</strong> {{ course.duration }}</p>
+            <p class="fs-6"><strong>📅 Start Date:</strong> {{ course.start_date }}</p>
+            <p class="fs-6"><strong>🏁 End Date:</strong> {{ course.end_date }}</p>
+            <p class="fs-6"><strong>💰 Price:</strong> 
+                {% if course.price == 0 %}
+                    <span class="badge bg-success">Free</span>
+                {% else %}
+                    <span class="badge bg-success">₹{{ course.price }}</span>
+                {% endif %}
+            </p>
+            <p class="fs-6"><strong>🎓 Categories:</strong> 
+                {% for category in course.categories.all %}
+                    <span class="badge bg-info">{{ category.name }}</span>
+                {% endfor %}
+            </p>
+
+            <div class="rating mt-3">
+                <strong class="fs-5">⭐ Rating:</strong> {{ course.avg_rating|default:"No ratings yet" }} ({{ course.total_reviews|default:0 }} reviews)
+            </div>
+        </div>
+
+        <!-- Right: Video Section -->
+        <div class="col-lg-6 order-1 order-lg-2 mb-4">
+            <div class="ratio ratio-16x9 rounded shadow-lg">
+                <video class="w-100 rounded" controls>
+                    <source src="{{ course.video.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Syllabus -->
+    <div class="mt-5">
+        <h3 class="text-primary">📚 Course Syllabus</h3>
+        <ul class="list-group list-group-flush">
+            {% for topic in course.content.splitlines %}
+                <li class="list-group-item fs-6"><i class="bi bi-bookmark-check-fill text-success"></i> {{ topic }}</li>
+            {% empty %}
+                <li class="list-group-item text-muted">No syllabus available.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Prerequisites -->
+    <div class="mt-4">
+        <h3 class="text-warning">📝 Prerequisites</h3>
+        <p class="fs-6 text-muted">{{ course.prerequisites|linebreaks }}</p>
+    </div>
+
+    <!-- Course Outcomes -->
+    <div class="mt-4">
+        <h3 class="text-success">🎯 Course Outcomes</h3>
+        <p class="fs-6 text-muted">{{ course.course_outcomes|linebreaks }}</p>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="mt-4">
+        <h3 class="text-info">💬 Student Reviews</h3>
+        {% for review in course.reviews.all %}
+            <div class="border p-3 mb-3 rounded bg-light shadow-sm">
+                <strong class="fs-6 text-primary"><i class="bi bi-person-circle"></i> {{ review.student.username }}</strong> 
+                <span class="text-warning fw-bold">⭐ {{ review.rating }}/5</span>
+                <p class="text-muted fs-6">{{ review.comment }}</p>
+            </div>
+        {% empty %}
+            <p class="text-muted fs-6">No reviews yet. Be the first to review this course!</p>
+        {% endfor %}
+    </div>
+
+    <!-- Add Review Form (Only for Enrolled Students) -->
+    {% if user in course.students_enrolled.all %}
+        <div class="mt-4 p-3 border rounded shadow bg-white">
+            <h4 class="text-dark fw-bold">📝 Add a Review</h4>
+            <form method="POST" action="{% url 'add_review' course.id %}">
+                {% csrf_token %}
+                <label for="rating" class="fs-6">⭐ Rating:</label>
+                <select name="rating" id="rating" class="form-select">
+                    <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                    <option value="4">⭐⭐⭐⭐ Good</option>
+                    <option value="3">⭐⭐⭐ Average</option>
+                    <option value="2">⭐⭐ Poor</option>
+                    <option value="1">⭐ Bad</option>
+                </select>
+
+                <label for="comment" class="fs-6 mt-2">💬 Comment:</label>
+                <textarea name="comment" id="comment" rows="3" class="form-control"></textarea>
+
+                <button type="submit" class="btn btn-primary mt-3 w-100"><i class="bi bi-send-fill"></i> Submit Review</button>
+            </form>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

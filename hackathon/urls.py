@@ -10,7 +10,7 @@ urlpatterns = [
     path("login/", user_login, name="user_login"), 
     path("logout/", logout_view, name="logout"),
     path("courses/", courses, name="courses"),
-    path('index_courses/', index_courses, name='index_courses'),
+    path("course/<int:course_id>/", course_detail, name="course_detail"),
 
     # Learner URLs
     path("learner/", learner, name="learner"),
@@ -23,6 +23,7 @@ urlpatterns = [
     path('instructor-profile/update/', update_instructor_profile, name='update_instructor_profile'),
     path('instructor/add-course/', add_course, name='add_course'), 
     path("instructor/course/edit/<int:course_id>/", edit_course, name="edit_course"),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
