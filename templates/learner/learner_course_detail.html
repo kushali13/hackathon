@@ -32,29 +32,36 @@
                 <strong class="fs-5">⭐ Rating:</strong> {{ course.avg_rating|default:"No ratings yet" }} ({{ course.total_reviews|default:0 }} reviews)
             </div>
 
-            <!-- Enroll Now Button -->
-            <div class="mt-4">
-                {% if user.is_authenticated %}
-                    {% if user in course.students_enrolled.all %}
-                        <button class="btn btn-success w-100" disabled>
-                            ✅ Enrolled
-                        </button>
-                    {% else %}
-                        <form method="POST" action="{% url 'learner_enroll_course' course.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-primary w-100">
-                                📚 Enroll Now
-                            </button>
-                        </form>
-                    {% endif %}
-                {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-warning w-100">
-                        🔑 Login to Enroll
-                    </a>
-                {% endif %}
-            </div>
+<!-- Enroll Now Button -->
+<div class="mt-4">
+    {% if user.is_authenticated %}
+        {% if user in course.students_enrolled.all %}
+            <button class="btn btn-success w-100" disabled>
+                ✅ Enrolled
+            </button>
+        {% else %}
+            {% if course.price == 0 %}
+                <form method="POST" action="{% url 'learner_enroll_course' course.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary w-100">
+                        📚 Enroll Now (Free)
+                    </button>
+                </form>
+            {% else %}
+                <button id="pay-btn" class="btn btn-primary w-100">
+                    💳 Pay ₹{{ course.price }} & Enroll
+                </button>
+            {% endif %}
+        {% endif %}
+    {% else %}
+        <a href="{% url 'login' %}" class="btn btn-warning w-100">
+            🔑 Login to Enroll
+        </a>
+    {% endif %}
+</div>
 
-        </div>
+
+</div>
 
         <!-- Right: Video Section -->
         <div class="col-lg-6 order-1 order-lg-2 mb-4 mt-2.5">
@@ -128,4 +135,35 @@
         </div>
     {% endif %}
 </div>
+
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.getElementById("pay-btn")?.addEventListener("click", function () {
+        var options = {
+            "key": "{{ razorpay_key }}",  
+            "amount": {{ course.price|floatformat:2|add:"0" }} * 100,
+            "currency": "INR",
+            "name": "{{ course.title }}",
+            "description": "Course Enrollment",
+            "handler": function (response) {
+                window.location.href = "{% url 'payment_success' course.id %}?payment_id=" + response.razorpay_payment_id;
+            },
+            "prefill": {
+                "name": "{{ user.first_name }} {{ user.last_name }}",
+                "email": "{{ user.email }}"
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+    });
+</script>
+
 {% endblock %}
+
+
+<!-- Razorpay Script -->

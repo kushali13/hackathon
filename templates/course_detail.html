@@ -8,7 +8,7 @@
     <div class="row">
         <!-- Left: Course Details -->
         <div class="col-lg-6 order-2 order-lg-1">
-            <h1 class="text-black fw-bold">{{ course.title }}</h1>
+            <h1 class="text-primary fw-bold">{{ course.title }}</h1>
             <p class="fs-5"><strong>👨‍🏫 Instructor:</strong> {{ course.instructor.first_name }} {{ course.instructor.last_name }}</p>
             <p class="fs-6"><strong>📌 Level:</strong> <span class="badge bg-secondary">{{ course.get_level_display }}</span></p>
             <p class="fs-6"><strong>🗣 Language:</strong> <span class="badge bg-success">{{ course.get_language_display }}</span></p>
@@ -31,33 +31,10 @@
             <div class="rating mt-3">
                 <strong class="fs-5">⭐ Rating:</strong> {{ course.avg_rating|default:"No ratings yet" }} ({{ course.total_reviews|default:0 }} reviews)
             </div>
-
-            <!-- Enroll Now Button -->
-            <div class="mt-4">
-                {% if user.is_authenticated %}
-                    {% if user in course.students_enrolled.all %}
-                        <button class="btn btn-success w-100" disabled>
-                            ✅ Enrolled
-                        </button>
-                    {% else %}
-                        <form method="POST" action="{% url 'enroll_course' course.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-primary w-100">
-                                📚 Enroll Now
-                            </button>
-                        </form>
-                    {% endif %}
-                {% else %}
-                    <a href="{% url 'user_login' %}" class="btn btn-warning w-100">
-                        🔑 Login to Enroll
-                    </a>
-                {% endif %}
-            </div>
-
         </div>
 
         <!-- Right: Video Section -->
-        <div class="col-lg-6 order-1 order-lg-2 mb-4 mt-2.5">
+        <div class="col-lg-6 order-1 order-lg-2 mb-4">
             <div class="ratio ratio-16x9 rounded shadow-lg">
                 <video class="w-100 rounded" controls>
                     <source src="{{ course.video.url }}" type="video/mp4">

@@ -15,6 +15,9 @@ urlpatterns = [
     path('course/<int:course_id>/enroll/', enroll_course, name='enroll_course'),
     path("logout-redirect/", logout_and_redirect, name="logout_redirect"),  # Fixed this line
 
+    path("create-order/<int:course_id>/", create_order, name="create_order"),
+    path("payment_success/<int:course_id>/", payment_success, name="payment_success"),
+
 
 
     # Learner URLs

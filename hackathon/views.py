@@ -8,6 +8,8 @@ from django.http import JsonResponse
 import json
 from django.contrib.auth import logout
 from django.contrib import messages
+import razorpay
+from django.conf import settings
 
 User = get_user_model()  # Get the custom user model
 
@@ -219,7 +221,12 @@ def course_detail(request, course_id):
 
 def learner_course_detail(request, course_id):
     course = get_object_or_404(Course, id=course_id)
-    return render(request, "learner/learner_course_detail.html", {"course": course})
+    context = {
+        "course": course,
+        "razorpay_key": settings.RAZORPAY_KEY_ID,  # Pass Razorpay Key
+    }
+
+    return render(request, "learner/learner_course_detail.html", context)
 
 
 @login_required
@@ -292,3 +299,38 @@ def update_learner_profile(request):
     return JsonResponse({"success": False})
 
 
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+
+def create_order(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+
+    order_amount = int(course.price * 100)  # Convert price to paise (₹1 = 100 paise)
+    order_currency = "INR"
+    order_receipt = f"order_rcptid_{course.id}"
+
+    order = razorpay_client.order.create({
+        "amount": order_amount,
+        "currency": order_currency,
+        "receipt": order_receipt,
+        "payment_capture": "1"
+    })
+
+    # Save order details in the database
+    payment = Payment.objects.create(
+        user=request.user,
+        course=course,
+        order_id=order["id"],
+        amount=order_amount / 100
+    )
+    
+    return JsonResponse(order)
+@login_required
+def payment_success(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    payment_id = request.GET.get("payment_id")
+
+    if payment_id:
+        course.students_enrolled.add(request.user)
+    
+    return redirect("learner_course_detail", course_id=course.id)  # Redirect directly to course
