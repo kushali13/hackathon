@@ -6,14 +6,26 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 import json
+from django.contrib.auth import logout
+from django.contrib import messages
 
 User = get_user_model()  # Get the custom user model
 
+def logout_and_redirect(request):
+    logout(request)
+    messages.warning(request, "You have been logged out automatically.")
+    return redirect('user_login') 
 
 def home(request):
+    if request.user.is_authenticated:
+        return logout_and_redirect(request)  # Auto logout if logged in   
     featured_courses = Course.objects.filter(is_featured=True)[:3]  # Fetch only 3 featured courses
-    print("Featured Courses:", featured_courses)  # Debugging
     return render(request, 'index.html', {'featured_courses': featured_courses})
+
+def about(request):
+    if request.user.is_authenticated:
+        return logout_and_redirect(request)  # Auto logout if logged in   
+    return render(request, 'about.html')
 
 
 def register(request):
@@ -41,9 +53,32 @@ def register(request):
         user.save()
 
         messages.success(request, "Account created successfully! Please log in.")
-        return redirect("user_login")  # Redirect to login page
+        return redirect("user_login")  
 
     return render(request, "register.html")
+
+@login_required
+def enroll_course(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+
+    if request.user not in course.students_enrolled.all():
+        course.students_enrolled.add(request.user)
+        messages.success(request, f"You have successfully enrolled in {course.title}!")
+    else:
+        messages.info(request, "You are already enrolled in this course.")
+
+    return redirect('learner_course_detail', course_id=course.id)
+
+@login_required
+def my_courses(request):
+    if request.user.is_authenticated and request.user.user_type != "learner":
+        return logout_and_redirect(request)  # Auto logout if logged in   
+    enrolled_courses = Course.objects.filter(students_enrolled=request.user)
+    return render(request, 'learner/my_courses.html', {'enrolled_courses': enrolled_courses})
+
+ 
+
+
 
 def user_login(request):
     if request.method == "POST":
@@ -182,6 +217,9 @@ def course_detail(request, course_id):
     course = get_object_or_404(Course, id=course_id)
     return render(request, "course_detail.html", {"course": course})
 
+def learner_course_detail(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    return render(request, "learner/learner_course_detail.html", {"course": course})
 
 
 @login_required

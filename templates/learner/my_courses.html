@@ -1,0 +1,34 @@
+{% extends 'learner/learner_base.html' %}
+{% load static %}
+
+{% block title %}My Courses{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-primary">📚 My Courses</h2>
+
+    {% if enrolled_courses %}
+        <div class="row">
+            {% for course in enrolled_courses %}
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ course.title }}</h5>
+                            <p class="card-text"><strong>👨‍🏫 Instructor:</strong> {{ course.instructor.first_name }} {{ course.instructor.last_name }}</p>
+                            <p class="card-text"><strong>⏳ Duration:</strong> {{ course.duration }}</p>
+                            <p class="card-text"><strong>📅 Start Date:</strong> {{ course.start_date }}</p>
+                            <p class="card-text"><strong>🏁 End Date:</strong> {{ course.end_date }}</p>
+
+                            <a href="{% url 'learner_course_detail' course.id %}" class="btn btn-primary">📖 Go to Course</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">You haven't enrolled in any courses yet.</p>
+        <a href="{% url 'courses_list' %}" class="btn btn-success">📚 Browse Courses</a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -11,7 +11,14 @@
 
         <div class="form-container">
             <!-- SIGN IN FORM -->
-            <div id="loginForm">
+                <div id="loginForm">
+                    {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
                 <h3 class="text-center text-primary">Welcome!</h3>
                 <form method="POST" action="{% url 'user_login' %}">
                     {% csrf_token %}

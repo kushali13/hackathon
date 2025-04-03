@@ -1,4 +1,4 @@
-{% extends 'base/base.html' %}
+{% extends 'learner/learner_base.html' %}
 {% load static %}
 
 {% block title %}{{ course.title }}{% endblock %}
@@ -40,7 +40,7 @@
                             ✅ Enrolled
                         </button>
                     {% else %}
-                        <form method="POST" action="{% url 'enroll_course' course.id %}">
+                        <form method="POST" action="{% url 'learner_enroll_course' course.id %}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-primary w-100">
                                 📚 Enroll Now
@@ -48,7 +48,7 @@
                         </form>
                     {% endif %}
                 {% else %}
-                    <a href="{% url 'user_login' %}" class="btn btn-warning w-100">
+                    <a href="{% url 'login' %}" class="btn btn-warning w-100">
                         🔑 Login to Enroll
                     </a>
                 {% endif %}
