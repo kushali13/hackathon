@@ -213,6 +213,18 @@ def update_instructor_profile(request):
         return JsonResponse({"success": True})
     
     return JsonResponse({"success": False})
+@login_required
+def update_profile_picture(request):
+    if request.method == "POST" and request.FILES.get("profile_picture"):
+        instructor_profile = get_object_or_404(InstructorProfile, user=request.user)
+        instructor_profile.profile_picture = request.FILES["profile_picture"]
+        instructor_profile.save()
+        return JsonResponse({"success": True, "profile_picture_url": instructor_profile.profile_picture.url})
+
+    return JsonResponse({"success": False, "error": "Invalid request"})
+
+
+
 
 # LEARNER VIEWS
 @login_required

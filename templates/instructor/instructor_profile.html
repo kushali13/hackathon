@@ -1,106 +1,146 @@
-{% extends 'instructor/instructor_base.html' %}
-{% load static %}
-{% block title %}Instructor Profile{% endblock %}
-{% block content %}
-    <div class="container mt-5">
-        <h2 class="text-primary">Instructor Profile</h2>
-        <table class="table table-bordered">
-            <tr>
-                <th>Username</th>
-                <td>{{ user.username }}</td>
-            </tr>
-            <tr>
-                <th>First Name</th>
-                <td><input type="text" name="first_name" id="first_name" class="form-control" value="{{ user.first_name|default_if_none:'' }}"></td>
-            </tr>
-            <tr>
-                <th>Last Name</th>
-                <td><input type="text" name="last_name" id="last_name" class="form-control" value="{{ user.last_name|default_if_none:'' }}"></td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ user.email }}</td>
-            </tr>
-            <tr>
-                <th>Bio</th>
-                <td><textarea name="bio" id="bio" class="form-control">{{ instructor_profile.bio|default_if_none:'' }}</textarea></td>
-            </tr>
-            <tr>
-                <th>Experience (years)</th>
-                <td><input type="number" name="experience" id="experience" class="form-control" value="{{ instructor_profile.experience|default_if_none:'' }}"></td>
-            </tr>
-            <tr>
-                <th>Skills</th>
-                <td><input type="text" name="skills" id="skills" class="form-control" value="{{ instructor_profile.skills|default_if_none:'' }}"></td>
-            </tr>
-            <tr>
-                <th>LinkedIn</th>
-                <td><input type="url" name="linkedin" id="linkedin" class="form-control" value="{{ instructor_profile.linkedin|default_if_none:'' }}"></td>
-            </tr>
-            <tr>
-                <th>GitHub</th>
-                <td><input type="url" name="github" id="github" class="form-control" value="{{ instructor_profile.github|default_if_none:'' }}"></td>
-            </tr>
-            <tr>
-                <th>Website</th>
-                <td><input type="url" name="website" id="website" class="form-control" value="{{ instructor_profile.website|default_if_none:'' }}"></td>
-            </tr>
-            <tr>
-                <th>Verification Status</th>
-                <td>{{ instructor_profile.is_verified|yesno:"Verified,Pending" }}</td>
-            </tr>
-        </table>
-        <button id="editButton" class="btn btn-primary">Update Profile</button>
-    </div>
+    {% extends 'instructor/instructor_base.html' %}
+    {% load static %}
+    {% block title %}Instructor Profile{% endblock %}
+    {% block content %}
+        <div class="container mt-5">
+            <h2 class="text-primary">Instructor Profile</h2>
+                    <!-- Profile Picture Upload -->
+        <div class="text-center mb-4">
+            <img id="profileImage" src="{{ instructor_profile.profile_picture.url }}" class="rounded-circle shadow-lg" alt="Profile Picture" width="150" height="150">
+            <input type="file" id="profilePictureInput" class="form-control mt-2" accept="image/*">
+            <button id="uploadProfilePicture" class="btn btn-success mt-2">Upload Picture</button>
+        </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let editButton = document.getElementById("editButton");
-    
-            if (editButton) {
-                editButton.addEventListener("click", function () {
-                    let first_name = document.getElementById("first_name").value;
-                    let last_name = document.getElementById("last_name").value;
-                    let bio = document.getElementById("bio").value;
-                    let experience = document.getElementById("experience").value;
-                    let skills = document.getElementById("skills").value;
-                    let linkedin = document.getElementById("linkedin").value;
-                    let github = document.getElementById("github").value;
-                    let website = document.getElementById("website").value;
-    
-                    fetch("{% url 'update_instructor_profile' %}", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRFToken": "{{ csrf_token }}"
-                        },
-                        body: JSON.stringify({
-                            first_name: first_name,
-                            last_name: last_name,
-                            bio: bio,
-                            experience: experience,
-                            skills: skills,
-                            linkedin: linkedin,
-                            github: github,
-                            website: website
+            <table class="table table-bordered">
+                <tr>
+                    <th>Username</th>
+                    <td>{{ user.username }}</td>
+                </tr>
+                <tr>
+                    <th>First Name</th>
+                    <td><input type="text" name="first_name" id="first_name" class="form-control" value="{{ user.first_name|default_if_none:'' }}"></td>
+                </tr>
+                <tr>
+                    <th>Last Name</th>
+                    <td><input type="text" name="last_name" id="last_name" class="form-control" value="{{ user.last_name|default_if_none:'' }}"></td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>{{ user.email }}</td>
+                </tr>
+                <tr>
+                    <th>Bio</th>
+                    <td><textarea name="bio" id="bio" class="form-control">{{ instructor_profile.bio|default_if_none:'' }}</textarea></td>
+                </tr>
+                <tr>
+                    <th>Experience (years)</th>
+                    <td><input type="number" name="experience" id="experience" class="form-control" value="{{ instructor_profile.experience|default_if_none:'' }}"></td>
+                </tr>
+                <tr>
+                    <th>Skills</th>
+                    <td><input type="text" name="skills" id="skills" class="form-control" value="{{ instructor_profile.skills|default_if_none:'' }}"></td>
+                </tr>
+                <tr>
+                    <th>LinkedIn</th>
+                    <td><input type="url" name="linkedin" id="linkedin" class="form-control" value="{{ instructor_profile.linkedin|default_if_none:'' }}"></td>
+                </tr>
+                <tr>
+                    <th>GitHub</th>
+                    <td><input type="url" name="github" id="github" class="form-control" value="{{ instructor_profile.github|default_if_none:'' }}"></td>
+                </tr>
+                <tr>
+                    <th>Website</th>
+                    <td><input type="url" name="website" id="website" class="form-control" value="{{ instructor_profile.website|default_if_none:'' }}"></td>
+                </tr>
+                <tr>
+                    <th>Verification Status</th>
+                    <td>{{ instructor_profile.is_verified|yesno:"Verified,Pending" }}</td>
+                </tr>
+            </table>
+            <button id="editButton" class="btn btn-primary">Update Profile</button>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let editButton = document.getElementById("editButton");
+        
+                if (editButton) {
+                    editButton.addEventListener("click", function () {
+                        let first_name = document.getElementById("first_name").value;
+                        let last_name = document.getElementById("last_name").value;
+                        let bio = document.getElementById("bio").value;
+                        let experience = document.getElementById("experience").value;
+                        let skills = document.getElementById("skills").value;
+                        let linkedin = document.getElementById("linkedin").value;
+                        let github = document.getElementById("github").value;
+                        let website = document.getElementById("website").value;
+        
+                        fetch("{% url 'update_instructor_profile' %}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRFToken": "{{ csrf_token }}"
+                            },
+                            body: JSON.stringify({
+                                first_name: first_name,
+                                last_name: last_name,
+                                bio: bio,
+                                experience: experience,
+                                skills: skills,
+                                linkedin: linkedin,
+                                github: github,
+                                website: website
+                            })
                         })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert("Profile updated successfully!");
-                            location.reload();  // Refresh page to reflect changes
-                        } else {
-                            alert("Error updating profile.");
-                        }
-                    })
-                    .catch(error => console.error("Error:", error));
-                });
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert("Profile updated successfully!");
+                                location.reload();  // Refresh page to reflect changes
+                            } else {
+                                alert("Error updating profile.");
+                            }
+                        })
+                        .catch(error => console.error("Error:", error));
+                    });
+                } else {
+                    console.error("Edit button not found!");
+                }
+            });
+
+
+                    // Profile Picture Upload
+        document.getElementById("uploadProfilePicture").addEventListener("click", function () {
+            let fileInput = document.getElementById("profilePictureInput");
+            let file = fileInput.files[0];
+
+            if (file) {
+                let formData = new FormData();
+                formData.append("profile_picture", file);
+
+                fetch("{% url 'update_profile_picture' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Profile picture updated successfully!");
+                        document.getElementById("profileImage").src = data.profile_picture_url;
+                    } else {
+                        alert("Error updating profile picture.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
             } else {
-                console.error("Edit button not found!");
+                alert("Please select an image file to upload.");
             }
         });
-    </script>
-    
 
-{% endblock %}
+        </script>
+        
+
+    {% endblock %}

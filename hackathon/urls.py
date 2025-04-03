@@ -19,8 +19,11 @@ urlpatterns = [
 
     # Insructor URLs
     path("instructor/", instructor, name="instructor"),
+
     path('instructor-profile/', instructor_profile, name='instructor_profile'),
     path('instructor-profile/update/', update_instructor_profile, name='update_instructor_profile'),
+    path("update-profile-picture/", update_profile_picture, name="update_profile_picture"),
+
     path('instructor/add-course/', add_course, name='add_course'), 
     path("instructor/course/edit/<int:course_id>/", edit_course, name="edit_course"),
 
