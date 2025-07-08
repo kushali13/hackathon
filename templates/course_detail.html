@@ -33,7 +33,6 @@
             </div>
         </div>
 
-        <!-- Right: Video Section -->
         <div class="col-lg-6 order-1 order-lg-2 mb-4">
             <div class="ratio ratio-16x9 rounded shadow-lg">
                 <video class="w-100 rounded" controls>
@@ -44,7 +43,6 @@
         </div>
     </div>
 
-    <!-- Course Syllabus -->
     <div class="mt-5">
         <h3 class="text-primary">📚 Course Syllabus</h3>
         <ul class="list-group list-group-flush">
@@ -56,19 +54,16 @@
         </ul>
     </div>
 
-    <!-- Prerequisites -->
     <div class="mt-4">
         <h3 class="text-warning">📝 Prerequisites</h3>
         <p class="fs-6 text-muted">{{ course.prerequisites|linebreaks }}</p>
     </div>
 
-    <!-- Course Outcomes -->
     <div class="mt-4">
         <h3 class="text-success">🎯 Course Outcomes</h3>
         <p class="fs-6 text-muted">{{ course.course_outcomes|linebreaks }}</p>
     </div>
 
-    <!-- Reviews Section -->
     <div class="mt-4">
         <h3 class="text-info">💬 Student Reviews</h3>
         {% for review in course.reviews.all %}
